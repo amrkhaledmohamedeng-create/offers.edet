@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>همسه | إدارة العروض</title>
+<style>
+:root{
+  --blue:#152A63;
+  --blue2:#23418A;
+  --gold:#FACA12;
+  --green:#16806A;
+  --bg:#f4f7fc;
+  --text:#17213a;
+  --muted:#68738c;
+  --white:#fff;
+  --danger:#c73535;
+  --border:#dce3f0;
+  --shadow:0 12px 35px rgba(21,42,99,.10);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.wrap{max-width:1250px;margin:auto;padding:25px}
+.topbar{
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  color:#fff;
+  padding:18px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  box-shadow:var(--shadow);
+}
+.topbar h1{margin:0;font-size:22px}
+.topbar small{opacity:.8}
+.btn{
+  border:0;
+  border-radius:11px;
+  padding:11px 16px;
+  font-weight:800;
+}
+.btn-primary{background:var(--gold);color:#17213a}
+.btn-blue{background:var(--blue);color:#fff}
+.btn-danger{background:#ffe8e8;color:var(--danger)}
+.btn-muted{background:#edf1f7;color:var(--text)}
+.login{
+  max-width:440px;
+  margin:12vh auto;
+  background:#fff;
+  padding:32px;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+}
+.logo{
+  width:65px;height:65px;border-radius:18px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--gold),#ffe98a);
+  color:var(--blue);font-size:28px;font-weight:900;
+  margin-bottom:15px;
+}
+h2,h3{margin-top:0}
+.field{margin-bottom:14px}
+label{display:block;font-weight:800;margin-bottom:7px}
+input,textarea,select{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:11px 12px;
+  background:#fff;
+  outline:none;
+}
+textarea{min-height:95px;resize:vertical}
+input:focus,textarea:focus,select:focus{
+  border-color:var(--blue2);
+  box-shadow:0 0 0 3px rgba(35,65,138,.10)
+}
+.grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:20px;
+}
+.panel{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:13px;
+}
+.full{grid-column:1/-1}
+.actions{
+  display:flex;gap:9px;flex-wrap:wrap;
+  margin-top:15px
+}
+.toolbar{
+  display:flex;gap:10px;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;
+  margin-bottom:15px
+}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filter{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:999px;
+  padding:8px 12px;
+  font-weight:800;
+}
+.filter.active{background:var(--blue);color:#fff}
+.cards{display:grid;gap:12px}
+.offer{
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:14px;
+  background:#fff;
+}
+.offer-top{
+  display:flex;justify-content:space-between;gap:10px;
+  align-items:flex-start
+}
+.offer h3{margin:0 0 5px}
+.meta{color:var(--muted);font-size:13px}
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  background:#fff4bb;
+  color:#7a5c00;
+  font-size:12px;
+  font-weight:900
+}
+.price{
+  margin:10px 0;
+  padding:9px;
+  border-radius:10px;
+  background:#eef5ff;
+  font-weight:900;
+}
+.items{
+  margin:8px 0;
+  padding-right:20px;
+  color:#44506b;
+  line-height:1.8
+}
+.offer-actions{
+  display:flex;gap:7px;flex-wrap:wrap;
+  margin-top:10px
+}
+.status{
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  font-weight:900;
+}
+.on{background:#e2f6ee;color:#147153}
+.off{background:#eee;color:#68738c}
+.msg{
+  padding:11px 13px;border-radius:10px;
+  margin-bottom:14px;display:none
+}
+.msg.show{display:block}
+.msg.ok{background:#e4f7ee;color:#146b50}
+.msg.err{background:#ffe8e8;color:#a52929}
+.note{
+  background:#fff8d8;border:1px solid #f3d55e;
+  padding:12px;border-radius:12px;
+  color:#665300;font-size:13px;line-height:1.7
+}
+@media(max-width:850px){
+  .grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .wrap{padding:14px}
+  .form-grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .topbar{padding:15px}
+}
+</style>
+</head>
+<body>
+
+<div id="loginView" class="login">
+  <div class="logo">هـ</div>
+  <h2>لوحة إدارة عروض همسه</h2>
+  <p style="color:var(--muted)">
+    سجل الدخول لإضافة وتعديل وحذف عروض العمرة والحج والكاش.
+  </p>
+
+  <div id="loginMsg" class="msg"></div>
+
+  <div class="field">
+    <label for="password">كلمة المرور</label>
+    <input id="password" type="password" autocomplete="current-password"
+           placeholder="اكتب كلمة مرور الإدارة">
+  </div>
+
+  <button id="loginBtn" class="btn btn-primary" style="width:100%">
+    تسجيل الدخول
+  </button>
+
+  <p class="note" style="margin-top:15px">
+    كلمة المرور لا يتم وضعها داخل ملف HTML. يتم التحقق منها داخل Google Apps Script.
+  </p>
+</div>
+
+<div id="appView" class="hidden">
+  <div class="topbar">
+    <div>
+      <h1>لوحة إدارة العروض</h1>
+      <small>همسه للحج والعمرة والسياحة الدينية</small>
+    </div>
+    <button id="logoutBtn" class="btn btn-muted">تسجيل الخروج</button>
+  </div>
+
+  <main class="wrap">
+    <div id="appMsg" class="msg"></div>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="toolbar">
+          <h2 id="formTitle">إضافة عرض جديد</h2>
+          <button id="newBtn" class="btn btn-muted">عرض جديد</button>
+        </div>
+
+        <form id="offerForm">
+          <input id="id" type="hidden">
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="section">القسم</label>
+              <select id="section" required>
+                <option value="umrah">عمرة</option>
+                <option value="hajj">حج</option>
+                <option value="cash">عمرة الكاش</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="active">الحالة</label>
+              <select id="active">
+                <option value="نعم">مفعل - يظهر في الموقع</option>
+                <option value="لا">مخفي - لا يظهر</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label for="title">عنوان العرض *</label>
+              <input id="title" required placeholder="مثال: عمرة التيسير">
+            </div>
+
+            <div class="field full">
+              <label for="subtitle">الوصف المختصر</label>
+              <input id="subtitle" placeholder="مثال: ابدأ من 1,000 جنيه">
+            </div>
+
+            <div class="field full">
+              <label for="items">التفاصيل</label>
+              <textarea id="items"
+                placeholder="اكتب كل نقطة في سطر منفصل، مثال:
+1000 جنيه × 24 شهر
+1250 جنيه × 24 شهر
+1500 جنيه × 24 شهر"></textarea>
+              <small class="meta">كل سطر يتحول إلى نقطة داخل العرض.</small>
+            </div>
+
+            <div class="field">
+              <label for="price">السعر / الشريط السفلي</label>
+              <input id="price" placeholder="مثال: يبدأ من 1,000 جنيه">
+            </div>
+
+            <div class="field">
+              <label for="priceLabel">تسمية السعر</label>
+              <input id="priceLabel" placeholder="اختياري">
+            </div>
+
+            <div class="field">
+              <label for="badge">شارة العرض</label>
+              <input id="badge" placeholder="مثال: الأكثر طلبًا">
+            </div>
+
+            <div class="field">
+              <label for="order">الترتيب</label>
+              <input id="order" type="number" value="1" min="0">
+            </div>
+
+            <div class="field full">
+              <label for="image">رابط صورة العرض</label>
+              <input id="image" type="url" placeholder="https://.../image.jpg">
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">حفظ العرض</button>
+            <button id="cancelBtn" class="btn btn-muted" type="button">إلغاء</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <div>
+            <h2 style="margin-bottom:4px">العروض الحالية</h2>
+            <span id="count" class="meta">جاري التحميل...</span>
+          </div>
+          <div class="filters">
+            <button class="filter active" data-filter="all">الكل</button>
+            <button class="filter" data-filter="umrah">العمرة</button>
+            <button class="filter" data-filter="hajj">الحج</button>
+            <button class="filter" data-filter="cash">الكاش</button>
+          </div>
+        </div>
+
+        <div id="offers" class="cards"></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+/*
+  ضع هنا رابط Web App الخاص بنفس Google Apps Script.
+  مثال:
+  https://script.google.com/macros/s/XXXXXXXXXXXX/exec
+*/
+const API_URL = 'PUT_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+const $ = id => document.getElementById(id);
+let token = localStorage.getItem('hamsa_admin_token') || '';
+let allOffers = [];
+let currentFilter = 'all';
+
+function showMsg(el, text, type='ok'){
+  el.textContent = text;
+  el.className = 'msg show ' + type;
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.className = 'msg', 4500);
+}
+
+function ensureApi(){
+  if(!API_URL || API_URL.includes('PUT_YOUR_')){
+    throw new Error('ضع رابط Google Apps Script داخل API_URL أولاً');
+  }
+}
+
+async function post(data){
+  ensureApi();
+
+  const body = new URLSearchParams();
+  Object.keys(data).forEach(k => body.append(k, data[k] ?? ''));
+
+  const response = await fetch(API_URL, {
+    method:'POST',
+    body
+  });
+
+  const text = await response.text();
+
+  let result;
+  try{
+    result = JSON.parse(text);
+  }catch(e){
+    throw new Error('استجابة غير مفهومة من Apps Script');
+  }
+
+  if(!result.ok){
+    throw new Error(result.error || 'حدث خطأ');
+  }
+
+  return result;
+}
+
+function showApp(){
+  $('loginView').classList.add('hidden');
+  $('appView').classList.remove('hidden');
+}
+
+function showLogin(){
+  $('appView').classList.add('hidden');
+  $('loginView').classList.remove('hidden');
+}
+
+async function login(){
+  const password = $('password').value.trim();
+
+  if(!password){
+    showMsg($('loginMsg'),'اكتب كلمة المرور','err');
+    return;
+  }
+
+  $('loginBtn').disabled = true;
+
+  try{
+    const result = await post({
+      action:'adminLogin',
+      password
+    });
+
+    token = result.token;
+    localStorage.setItem('hamsa_admin_token', token);
+    $('password').value = '';
+    showApp();
+    await loadOffers();
+  }catch(err){
+    showMsg($('loginMsg'),err.message,'err');
+  }finally{
+    $('loginBtn').disabled = false;
+  }
+}
+
+async function loadOffers(){
+  try{
+    const result = await post({
+      action:'adminListOffers',
+      token
+    });
+
+    allOffers = result.offers || [];
+    renderOffers();
+  }catch(err){
+    if(err.message.includes('جلسة')){
+      token = '';
+      localStorage.removeItem('hamsa_admin_token');
+      showLogin();
+    }
+    showMsg($('appMsg'),err.message,'err');
+  }
+}
+
+function sectionName(section){
+  return ({
+    umrah:'العمرة',
+    hajj:'الحج',
+    cash:'عمرة الكاش'
+  })[section] || section;
+}
+
+function escapeHtml(value){
+  return String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+}
+
+function renderOffers(){
+  const list = currentFilter === 'all'
+    ? allOffers
+    : allOffers.filter(o => o.section === currentFilter);
+
+  $('count').textContent = `${list.length} عرض`;
+
+  if(!list.length){
+    $('offers').innerHTML =
+      '<div class="note">لا توجد عروض في هذا القسم.</div>';
+    return;
+  }
+
+  $('offers').innerHTML = list.map(o => {
+    const items = (o.items || [])
+      .map(x => `<li>${escapeHtml(x)}</li>`)
+      .join('');
+
+    return `
+      <article class="offer">
+        <div class="offer-top">
+          <div>
+            <h3>${escapeHtml(o.title)}</h3>
+            <div class="meta">${escapeHtml(sectionName(o.section))} · ID: ${escapeHtml(o.id)}</div>
+          </div>
+          <span class="status ${o.active === 'نعم' ? 'on' : 'off'}">
+            ${o.active === 'نعم' ? 'مفعل' : 'مخفي'}
+          </span>
+        </div>
+
+        ${o.badge ? `<div style="margin-top:8px"><span class="badge">${escapeHtml(o.badge)}</span></div>` : ''}
+
+        ${o.subtitle ? `<p class="meta">${escapeHtml(o.subtitle)}</p>` : ''}
+
+        ${o.items && o.items.length ? `<ul class="items">${items}</ul>` : ''}
+
+        ${o.price ? `<div class="price">${escapeHtml(o.price)}</div>` : ''}
+
+        <div class="meta">
+          الترتيب: ${escapeHtml(o.order)}
+          ${o.image ? ' · صورة مضافة' : ''}
+        </div>
+
+        <div class="offer-actions">
+          <button class="btn btn-blue" onclick="editOffer('${encodeURIComponent(o.id)}')">تعديل</button>
+          <button class="btn btn-danger" onclick="deleteOffer('${encodeURIComponent(o.id)}')">حذف</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function resetForm(){
+  $('offerForm').reset();
+  $('id').value = '';
+  $('order').value = 1;
+  $('active').value = 'نعم';
+  $('formTitle').textContent = 'إضافة عرض جديد';
+}
+
+function editOffer(encodedId){
+  const id = decodeURIComponent(encodedId);
+  const o = allOffers.find(x => String(x.id) === String(id));
+  if(!o) return;
+
+  $('id').value = o.id;
+  $('section').value = o.section;
+  $('title').value = o.title;
+  $('subtitle').value = o.subtitle;
+  $('items').value = (o.items || []).join('\n');
+  $('price').value = o.price;
+  $('priceLabel').value = o.priceLabel;
+  $('badge').value = o.badge;
+  $('image').value = o.image;
+  $('order').value = o.order;
+  $('active').value = o.active === 'لا' ? 'لا' : 'نعم';
+  $('formTitle').textContent = 'تعديل العرض';
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function deleteOffer(encodedId){
+  const id = decodeURIComponent(encodedId);
+  const o = allOffers.find(x => String(x.id) === String(id));
+
+  if(!o) return;
+
+  if(!confirm(`هل أنت متأكد من حذف "${o.title}"؟`)) return;
+
+  try{
+    await post({
+      action:'adminDeleteOffer',
+      token,
+      id
+    });
+
+    showMsg($('appMsg'),'تم حذف العرض','ok');
+    await loadOffers();
+  }catch(err){
+    showMsg($('appMsg'),err.message,'err');
+  }
+}
+
+async function saveOffer(e){
+  e.preventDefault();
+
+  const items = $('items').value
+    .split(/\r?\n/)
+    .map(x => x.trim())
+    .filter(Boolean)
+    .join('|');
+
+  try{
+    const result = await post({
+      action:'adminSaveOffer',
+      token,
+      id:$('id').value.trim(),
+      section:$('section').value,
+      title:$('title').value.trim(),
+      subtitle:$('subtitle').value.trim(),
+      items,
+      price:$('price').value.trim(),
+      priceLabel:$('priceLabel').value.trim(),
+      badge:$('badge').value.trim(),
+      image:$('image').value.trim(),
+      order:$('order').value,
+      active:$('active').value
+    });
+
+    showMsg($('appMsg'),result.message || 'تم الحفظ','ok');
+    resetForm();
+    await loadOffers();
+  }catch(err){
+    showMsg($('appMsg'),err.message,'err');
+  }
+}
+
+async function logout(){
+  try{
+    if(token){
+      await post({action:'adminLogout',token});
+    }
+  }catch(e){}
+
+  token = '';
+  localStorage.removeItem('hamsa_admin_token');
+  resetForm();
+  showLogin();
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  $('loginBtn').addEventListener('click', login);
+  $('password').addEventListener('keydown', e => {
+    if(e.key === 'Enter') login();
+  });
+
+  $('logoutBtn').addEventListener('click', logout);
+  $('newBtn').addEventListener('click', resetForm);
+  $('cancelBtn').addEventListener('click', resetForm);
+  $('offerForm').addEventListener('submit', saveOffer);
+
+  document.querySelectorAll('.filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter').forEach(x => x.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderOffers();
+    });
+  });
+
+  if(token){
+    showApp();
+    await loadOffers();
+  }
+});
+</script>
+</body>
+</html>
