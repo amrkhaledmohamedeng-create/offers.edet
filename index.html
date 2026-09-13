@@ -33,10 +33,11 @@ header h1{font-size:18px;margin:0}
 .offer .actions button{padding:6px 12px;font-size:13px;border-radius:8px}
 .modal-overlay{position:fixed;inset:0;background:#00000066;display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
 .modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:16px;padding:22px;max-width:520px;width:100%;max-height:90vh;overflow:auto}
+.modal{background:#fff;border-radius:16px;padding:22px;max-width:540px;width:100%;max-height:90vh;overflow:auto}
 .modal h3{margin-top:0;color:var(--green)}
 .form-row{margin-bottom:12px}
 .form-row label{display:block;font-weight:700;margin-bottom:5px;font-size:14px}
+.form-row .hint{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:3px}
 .form-row input,.form-row select,.form-row textarea{width:100%;padding:10px;border-radius:9px;border:1px solid #d7dde5;font:inherit}
 .form-actions{display:flex;gap:10px;margin-top:14px}
 .msg{padding:10px 14px;border-radius:10px;font-weight:700;margin-bottom:14px;display:none}
@@ -97,20 +98,25 @@ header h1{font-size:18px;margin:0}
       <input type="hidden" id="offerId">
       <div class="form-row">
         <label>القسم *</label>
-        <select id="fSection" required>
+        <select id="fSection" required onchange="updateFieldLabels()">
           <option value="umrah">العمرة</option>
           <option value="hajj">الحج</option>
           <option value="cash">عمرة الكاش</option>
         </select>
       </div>
       <div class="form-row"><label>العنوان *</label><input id="fTitle" required placeholder="مثال: عمرة التيسير"></div>
-      <div class="form-row"><label>وصف قصير</label><input id="fSubtitle" placeholder="مثال: ابدأ من 1,000 جنيه"></div>
+      <div class="form-row"><label id="lblSubtitle">وصف قصير</label><input id="fSubtitle" placeholder="مثال: ابدأ من 1,000 جنيه"></div>
       <div class="form-row">
-        <label>تفاصيل العرض (كل نقطة في سطر)</label>
+        <label id="lblItems">تفاصيل العرض (كل نقطة في سطر)</label>
         <textarea id="fItems" rows="4" placeholder="1000 جنيه × 24 شهر
 2000 جنيه × 12 شهر"></textarea>
+        <span class="hint" id="hintItems"></span>
       </div>
-      <div class="form-row"><label>نص السعر / الشريط الملون</label><input id="fPrice" placeholder="مثال: ابدأ من 1,000 جنيه"></div>
+      <div class="form-row">
+        <label id="lblPrice">نص السعر / الشريط الملون</label>
+        <textarea id="fPrice" rows="2" placeholder="مثال: ابدأ من 1,000 جنيه"></textarea>
+        <span class="hint" id="hintPrice"></span>
+      </div>
       <div class="form-row"><label>رابط صورة (اختياري)</label><input id="fImage" placeholder="https://..."></div>
       <div class="form-row"><label>ترتيب الظهور (رقم، الأصغر يظهر أولًا)</label><input id="fOrder" type="number" value="1"></div>
       <div class="form-row">
@@ -126,7 +132,7 @@ header h1{font-size:18px;margin:0}
 </div>
 
 <script>
-let SCRIPT_URL = localStorage.getItem('https://script.google.com/macros/s/AKfycbw_cCB2H9ndKYBI0XWhOO-mYdD7en91v1y9SezPU3qJE64aAXhtbH54pMdTuSpUCTA7nA/exec') || '';
+let SCRIPT_URL = localStorage.getItem('hamsa_script_url') || '';
 let ADMIN_KEY = sessionStorage.getItem('hamsa_admin_key') || '';
 let currentOffers = [];
 let currentSection = '';
@@ -143,6 +149,35 @@ function showMsg(el,text,type){
   el.className = 'msg show ' + (type||'');
 }
 
+function updateFieldLabels(){
+  const s = document.getElementById('fSection').value;
+  const lblItems = document.getElementById('lblItems');
+  const lblPrice = document.getElementById('lblPrice');
+  const lblSubtitle = document.getElementById('lblSubtitle');
+  const hintItems = document.getElementById('hintItems');
+  const hintPrice = document.getElementById('hintPrice');
+  const fItems = document.getElementById('fItems');
+  const fPrice = document.getElementById('fPrice');
+
+  if(s === 'cash'){
+    lblSubtitle.textContent = 'ملاحظة قصيرة (اختياري، مثل نوع الطيران)';
+    lblItems.textContent = 'بيانات الفنادق (سطر لكل فندق)';
+    hintItems.textContent = 'مثال: المدينة: نسك المدينة / درة الإيمان — 3 ليالي';
+    fItems.placeholder = 'المدينة: نسك المدينة / درة الإيمان — 3 ليالي\nمكة: قصر العليان — 11 ليلة';
+    lblPrice.textContent = 'أسعار الغرف (سطر لكل نوع)';
+    hintPrice.textContent = 'اكتب كل نوع غرفة وسعره بالشكل: النوع:السعر — مثال: رباعي:40,500';
+    fPrice.placeholder = 'رباعي:40,500\nثلاثي:43,500\nثنائي:48,900\nسينجل:64,500';
+  }else{
+    lblSubtitle.textContent = 'وصف قصير';
+    lblItems.textContent = 'تفاصيل العرض (كل نقطة في سطر)';
+    hintItems.textContent = '';
+    fItems.placeholder = '1000 جنيه × 24 شهر\n2000 جنيه × 12 شهر';
+    lblPrice.textContent = 'نص السعر / الشريط الملون';
+    hintPrice.textContent = '';
+    fPrice.placeholder = 'مثال: ابدأ من 1,000 جنيه';
+  }
+}
+
 async function doLogin(){
   const url = document.getElementById('scriptUrlInput').value.trim();
   const key = document.getElementById('keyInput').value.trim();
@@ -150,7 +185,7 @@ async function doLogin(){
   SCRIPT_URL = url.replace(/\/+$/,'');
   ADMIN_KEY = key;
   try{
-    const res = await fetch(`${SCRIPT_URL}?action=offersAdmin&key=${encodeURIComponent(ADMIN_KEY)}`);
+    const res = await fetch(SCRIPT_URL + '?action=offersAdmin&key=' + encodeURIComponent(ADMIN_KEY));
     const data = await res.json();
     if(!data.ok){ showMsg(loginMsg, data.error || 'تعذر تسجيل الدخول', 'error'); return; }
     localStorage.setItem('hamsa_script_url', SCRIPT_URL);
@@ -172,7 +207,7 @@ function doLogout(){
 }
 
 async function reloadOffers(){
-  const res = await fetch(`${SCRIPT_URL}?action=offersAdmin&key=${encodeURIComponent(ADMIN_KEY)}`);
+  const res = await fetch(SCRIPT_URL + '?action=offersAdmin&key=' + encodeURIComponent(ADMIN_KEY));
   const data = await res.json();
   if(data.ok){ currentOffers = data.offers || []; renderOffers(); }
   else showMsg(dashMsg, data.error||'خطأ في التحميل', 'error');
@@ -180,46 +215,49 @@ async function reloadOffers(){
 
 function setSection(sec, el){
   currentSection = sec;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
   el.classList.add('active');
   renderOffers();
 }
 
 function renderOffers(){
   const list = document.getElementById('offerList');
-  const items = currentSection ? currentOffers.filter(o=>o.section===currentSection) : currentOffers;
+  const items = currentSection ? currentOffers.filter(function(o){return o.section===currentSection;}) : currentOffers;
   if(!items.length){ list.innerHTML = '<div class="empty">لا يوجد عروض في هذا القسم بعد</div>'; return; }
-  list.innerHTML = items.map(o=>`
-    <div class="offer ${o.active==='نعم'?'':'inactive'}">
-      <div class="info">
-        <b>${escapeHtml(o.title)} ${o.active!=='نعم'?'(مخفي)':''}</b>
-        <span>${escapeHtml(o.subtitle||'')} — القسم: ${sectionLabel(o.section)} — ترتيب: ${o.order}</span>
-      </div>
-      <div class="actions">
-        <button class="btn btn-light" onclick='editOffer(${JSON.stringify(o.id)})'>تعديل</button>
-        <button class="btn btn-danger" onclick='deleteOffer(${JSON.stringify(o.id)})'>حذف</button>
-      </div>
-    </div>
-  `).join('');
+  list.innerHTML = items.map(function(o){
+    return '<div class="offer ' + (o.active==='نعم'?'':'inactive') + '">' +
+      '<div class="info">' +
+        '<b>' + escapeHtml(o.title) + ' ' + (o.active!=='نعم'?'(مخفي)':'') + '</b>' +
+        '<span>' + escapeHtml(o.subtitle||'') + ' — القسم: ' + sectionLabel(o.section) + ' — ترتيب: ' + o.order + '</span>' +
+      '</div>' +
+      '<div class="actions">' +
+        '<button class="btn btn-light" onclick=\'editOffer(' + JSON.stringify(o.id) + ')\'>تعديل</button>' +
+        '<button class="btn btn-danger" onclick=\'deleteOffer(' + JSON.stringify(o.id) + ')\'>حذف</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
 }
 
 function sectionLabel(s){
   return s==='umrah'?'العمرة':s==='hajj'?'الحج':s==='cash'?'عمرة الكاش':s;
 }
 function escapeHtml(s){
-  return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(s||'').replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
 }
 
 function openModal(){
   document.getElementById('modalTitle').textContent='إضافة عرض جديد';
   document.getElementById('offerForm').reset();
   document.getElementById('offerId').value='';
+  updateFieldLabels();
   document.getElementById('modalOverlay').classList.add('show');
 }
 function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
 
 function editOffer(id){
-  const o = currentOffers.find(x=>x.id===id);
+  const o = currentOffers.find(function(x){return x.id===id;});
   if(!o) return;
   document.getElementById('modalTitle').textContent='تعديل العرض';
   document.getElementById('offerId').value=o.id;
@@ -227,17 +265,18 @@ function editOffer(id){
   document.getElementById('fTitle').value=o.title;
   document.getElementById('fSubtitle').value=o.subtitle;
   document.getElementById('fItems').value=(o.items||[]).join('\n');
-  document.getElementById('fPrice').value=o.price;
+  document.getElementById('fPrice').value=(o.price||'').split('|').map(function(s){return s.trim();}).filter(Boolean).join('\n');
   document.getElementById('fImage').value=o.image;
   document.getElementById('fOrder').value=o.order;
   document.getElementById('fActive').value=o.active==='نعم'?'نعم':'لا';
+  updateFieldLabels();
   document.getElementById('modalOverlay').classList.add('show');
 }
 
 async function deleteOffer(id){
   if(!confirm('هل أنت متأكد من حذف هذا العرض؟')) return;
-  const body = new URLSearchParams({action:'deleteOffer', key:ADMIN_KEY, id});
-  const res = await fetch(SCRIPT_URL, {method:'POST', body});
+  const body = new URLSearchParams({action:'deleteOffer', key:ADMIN_KEY, id:id});
+  const res = await fetch(SCRIPT_URL, {method:'POST', body:body});
   const data = await res.json();
   if(data.ok){ showMsg(dashMsg,'تم حذف العرض','success'); reloadOffers(); }
   else showMsg(dashMsg, data.error||'تعذر الحذف','error');
@@ -246,7 +285,8 @@ async function deleteOffer(id){
 document.getElementById('offerForm').addEventListener('submit', async function(e){
   e.preventDefault();
   const id = document.getElementById('offerId').value.trim();
-  const items = document.getElementById('fItems').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
+  const items = document.getElementById('fItems').value.split('\n').map(function(s){return s.trim();}).filter(Boolean).join('|');
+  const price = document.getElementById('fPrice').value.split('\n').map(function(s){return s.trim();}).filter(Boolean).join('|');
   const payload = {
     key: ADMIN_KEY,
     action: id ? 'updateOffer' : 'addOffer',
@@ -255,14 +295,14 @@ document.getElementById('offerForm').addEventListener('submit', async function(e
     title: document.getElementById('fTitle').value.trim(),
     subtitle: document.getElementById('fSubtitle').value.trim(),
     items: items,
-    price: document.getElementById('fPrice').value.trim(),
+    price: price,
     image: document.getElementById('fImage').value.trim(),
     order: document.getElementById('fOrder').value || '1',
     active: document.getElementById('fActive').value
   };
   const body = new URLSearchParams(payload);
   try{
-    const res = await fetch(SCRIPT_URL, {method:'POST', body});
+    const res = await fetch(SCRIPT_URL, {method:'POST', body:body});
     const data = await res.json();
     if(data.ok){
       showMsg(dashMsg, id?'تم تعديل العرض':'تم إضافة العرض','success');
@@ -276,18 +316,19 @@ document.getElementById('offerForm').addEventListener('submit', async function(e
   }
 });
 
-// دخول تلقائي لو الرابط والمفتاح محفوظين بالفعل
+updateFieldLabels();
+
 if(SCRIPT_URL && ADMIN_KEY){
-  fetch(`${SCRIPT_URL}?action=offersAdmin&key=${encodeURIComponent(ADMIN_KEY)}`)
-    .then(r=>r.json())
-    .then(data=>{
+  fetch(SCRIPT_URL + '?action=offersAdmin&key=' + encodeURIComponent(ADMIN_KEY))
+    .then(function(r){return r.json();})
+    .then(function(data){
       if(data.ok){
         currentOffers = data.offers || [];
         loginScreen.style.display='none';
         dashboard.style.display='block';
         renderOffers();
       }
-    }).catch(()=>{});
+    }).catch(function(){});
 }
 </script>
 </body>
