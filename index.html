@@ -3,333 +3,372 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة تحكم همسه للسياحة</title>
-<meta name="robots" content="noindex, nofollow">
+<title>لوحة تعديل العروض | همسه للسياحة</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
-:root{--green:#23418A;--green2:#2F63AE;--gold:#FACA12;--ink:#16244A;--muted:#64708A;--bg:#F4F7FF;}
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+:root{--green:#23418A;--gold:#FACA12;--dark:#152A63;--ink:#16244A;--muted:#64708A;--line:#DCE5F7}
 *{box-sizing:border-box}
-body{margin:0;font-family:Cairo,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{background:var(--green);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
-header h1{font-size:18px;margin:0}
-.container{max-width:1100px;margin:24px auto;padding:0 16px}
-.btn{border:none;border-radius:10px;padding:10px 18px;font-weight:800;cursor:pointer;font-family:inherit}
-.btn-gold{background:var(--gold);color:var(--ink)}
-.btn-green{background:var(--green2);color:#fff}
-.btn-danger{background:#c0392b;color:#fff}
-.btn-light{background:#fff;color:var(--green);border:1px solid #d7dde5}
-.card{background:#fff;border:1px solid #dce5f7;border-radius:14px;padding:20px;box-shadow:0 6px 18px #0000000d}
-.login-box{max-width:380px;margin:80px auto;text-align:center}
-.login-box input{width:100%;padding:12px;border-radius:10px;border:1px solid #d7dde5;margin:10px 0;font:inherit}
-.tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
-.tab{padding:8px 16px;border-radius:30px;background:#fff;border:1px solid #d7dde5;cursor:pointer;font-weight:700}
-.tab.active{background:var(--green);color:#fff;border-color:var(--green)}
-.offer-list{display:grid;gap:14px}
-.offer{border:1px solid #dce5f7;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;background:#fff}
-.offer.inactive{opacity:.55}
-.offer .info b{display:block;font-size:16px;color:var(--green)}
-.offer .info span{font-size:13px;color:var(--muted)}
-.offer .actions{display:flex;gap:6px;flex-shrink:0}
-.offer .actions button{padding:6px 12px;font-size:13px;border-radius:8px}
-.modal-overlay{position:fixed;inset:0;background:#00000066;display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
-.modal-overlay.show{display:flex}
-.modal{background:#fff;border-radius:16px;padding:22px;max-width:540px;width:100%;max-height:90vh;overflow:auto}
-.modal h3{margin-top:0;color:var(--green)}
-.form-row{margin-bottom:12px}
-.form-row label{display:block;font-weight:700;margin-bottom:5px;font-size:14px}
-.form-row .hint{display:block;font-size:12px;color:var(--muted);font-weight:400;margin-top:3px}
-.form-row input,.form-row select,.form-row textarea{width:100%;padding:10px;border-radius:9px;border:1px solid #d7dde5;font:inherit}
-.form-actions{display:flex;gap:10px;margin-top:14px}
-.msg{padding:10px 14px;border-radius:10px;font-weight:700;margin-bottom:14px;display:none}
+body{margin:0;font-family:Cairo,Arial,sans-serif;background:#F4F7FF;color:var(--ink)}
+header{background:var(--dark);color:#fff;padding:16px 0;border-bottom:3px solid var(--gold)}
+.container{width:min(1100px,94%);margin:auto}
+header .container{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:20px;margin:0}
+.btn{padding:10px 18px;border-radius:10px;font-weight:800;border:1px solid transparent;cursor:pointer;font-family:inherit;font-size:14px}
+.btn-gold{background:var(--gold);color:var(--dark)}
+.btn-green{background:var(--green);color:#fff}
+.btn-light{background:#fff;color:var(--green);border-color:var(--line)}
+.btn-red{background:#fff0f0;color:#a12626;border-color:#f3c9c9}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 8px 25px #0000000d}
+label{display:block;font-weight:800;margin:0 0 6px}
+input,select,textarea{width:100%;border:1px solid #d7dde5;border-radius:10px;padding:10px 12px;font:inherit;background:#fff;color:var(--ink);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(35,65,138,.12)}
+.row{margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+@media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr}}
+.hint{font-size:12px;color:var(--muted);margin-top:5px;font-weight:600}
+.msg{display:none;margin-top:12px;padding:10px 12px;border-radius:10px;font-weight:800;text-align:center}
 .msg.show{display:block}
-.msg.success{background:#e9f8ef;color:#176b3a}
-.msg.error{background:#fff0f0;color:#a12626}
-.empty{color:var(--muted);text-align:center;padding:30px}
-.top-actions{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px}
-.small{font-size:12px;color:var(--muted)}
+.msg.ok{background:#e9f8ef;color:#176b3a}
+.msg.err{background:#fff0f0;color:#a12626}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.tab{padding:9px 16px;border-radius:30px;background:#fff;border:1px solid var(--line);font-weight:800;cursor:pointer}
+.tab.active{background:var(--green);color:#fff;border-color:var(--green)}
+table{width:100%;border-collapse:collapse;margin-top:14px}
+th,td{border:1px solid var(--line);padding:9px;text-align:right;font-size:14px}
+th{background:#F3F6FC;font-weight:800}
+td.actions{white-space:nowrap;text-align:center}
+.off{opacity:.5}
+.center{text-align:center}
+#login{max-width:420px;margin:60px auto}
+#panel{display:none;padding-bottom:60px}
+.chip{display:inline-block;background:#EAF1FF;color:var(--green);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:800}
 </style>
 </head>
 <body>
 
-<div id="loginScreen" class="login-box">
-  <div class="card">
-    <h2>لوحة تحكم همسه</h2>
-    <p class="small">أدخل رابط سكريبت جوجل ومفتاح الدخول الإداري</p>
-    <div class="form-row" style="text-align:right">
-      <label>رابط Apps Script (ينتهي بـ /exec)</label>
-      <input id="scriptUrlInput" type="text" placeholder="https://script.google.com/macros/s/AKfycbw_cCB2H9ndKYBI0XWhOO-mYdD7en91v1y9SezPU3qJE64aAXhtbH54pMdTuSpUCTA7nA/exec">
-    </div>
-    <div class="form-row" style="text-align:right">
-      <label>مفتاح الدخول الإداري</label>
-      <input id="keyInput" type="password" placeholder="ADMIN_KEY">
-    </div>
-    <div id="loginMsg" class="msg"></div>
-    <button class="btn btn-gold" style="width:100%" onclick="doLogin()">دخول</button>
-  </div>
-</div>
+<header><div class="container">
+  <h1>لوحة تعديل عروض همسه</h1>
+  <button class="btn btn-light" id="logout" style="display:none">خروج</button>
+</div></header>
 
-<div id="dashboard" style="display:none">
-  <header>
-    <h1>لوحة تحكم عروض همسه للسياحة</h1>
-    <button class="btn btn-light" onclick="doLogout()">خروج</button>
-  </header>
-  <div class="container">
-    <div class="top-actions">
-      <div class="tabs">
-        <div class="tab active" data-section="" onclick="setSection('',this)">الكل</div>
-        <div class="tab" data-section="umrah" onclick="setSection('umrah',this)">العمرة</div>
-        <div class="tab" data-section="hajj" onclick="setSection('hajj',this)">الحج</div>
-        <div class="tab" data-section="cash" onclick="setSection('cash',this)">عمرة الكاش</div>
-      </div>
-      <button class="btn btn-green" onclick="openModal()">+ إضافة عرض جديد</button>
+<div class="container">
+
+  <div id="login" class="card">
+    <h2 style="margin-top:0">تسجيل الدخول</h2>
+    <div class="row">
+      <label>مفتاح الدخول</label>
+      <input type="password" id="key" placeholder="اكتب المفتاح السري">
+      <div class="hint">هو نفس قيمة ADMIN_KEY الموجودة في كود Apps Script.</div>
     </div>
-    <div id="dashMsg" class="msg"></div>
+    <button class="btn btn-gold" style="width:100%" id="loginBtn">دخول</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+
+  <div id="panel">
+    <div class="tabs">
+      <div class="tab active" data-sec="umrah">برامج العمرة</div>
+      <div class="tab" data-sec="hajj">برامج الحج</div>
+      <div class="tab" data-sec="cash">كاش اقتصادي</div>
+      <div class="tab" data-sec="cash5">كاش 5 نجوم</div>
+    </div>
+
     <div class="card">
-      <div id="offerList" class="offer-list"><div class="empty">جاري التحميل...</div></div>
-    </div>
-    <p class="small" style="margin-top:14px">ملحوظة: التبويب "الكل" يعرض حتى العروض المخفية (غير المفعّلة) عشان تقدر تراجعها أو تعيد تفعيلها.</p>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <h3 id="modalTitle">إضافة عرض جديد</h3>
-    <form id="offerForm">
+      <h2 style="margin-top:0" id="formTitle">إضافة عرض جديد</h2>
       <input type="hidden" id="offerId">
-      <div class="form-row">
-        <label>القسم *</label>
-        <select id="fSection" required onchange="updateFieldLabels()">
-          <option value="umrah">العمرة</option>
-          <option value="hajj">الحج</option>
-          <option value="cash">عمرة الكاش</option>
-        </select>
+
+      <div class="grid2">
+        <div class="row">
+          <label>القسم</label>
+          <select id="section">
+            <option value="umrah">برامج العمرة</option>
+            <option value="hajj">برامج الحج</option>
+            <option value="cash">كاش اقتصادي</option>
+            <option value="cash5">كاش 5 نجوم</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>اسم العرض</label>
+          <input id="title" placeholder="مثال: عمرة التيسير الذهبية">
+        </div>
       </div>
-      <div class="form-row"><label>العنوان *</label><input id="fTitle" required placeholder="مثال: عمرة التيسير"></div>
-      <div class="form-row"><label id="lblSubtitle">وصف قصير</label><input id="fSubtitle" placeholder="مثال: ابدأ من 1,000 جنيه"></div>
-      <div class="form-row">
-        <label id="lblItems">تفاصيل العرض (كل نقطة في سطر)</label>
-        <textarea id="fItems" rows="4" placeholder="1000 جنيه × 24 شهر
-2000 جنيه × 12 شهر"></textarea>
-        <span class="hint" id="hintItems"></span>
+
+      <div class="row">
+        <label id="itemsLabel">تفاصيل العرض</label>
+        <textarea id="items" rows="5" placeholder="كل سطر = نقطة مستقلة"></textarea>
+        <div class="hint" id="itemsHint">اكتب كل نقطة في سطر مستقل.</div>
       </div>
-      <div class="form-row">
-        <label id="lblPrice">نص السعر / الشريط الملون</label>
-        <textarea id="fPrice" rows="2" placeholder="مثال: ابدأ من 1,000 جنيه"></textarea>
-        <span class="hint" id="hintPrice"></span>
+
+      <div class="row">
+        <label id="priceLabelTxt">السعر</label>
+        <textarea id="price" rows="4"></textarea>
+        <div class="hint" id="priceHint"></div>
       </div>
-      <div class="form-row"><label>رابط صورة (اختياري)</label><input id="fImage" placeholder="https://..."></div>
-      <div class="form-row"><label>ترتيب الظهور (رقم، الأصغر يظهر أولًا)</label><input id="fOrder" type="number" value="1"></div>
-      <div class="form-row">
-        <label>الحالة</label>
-        <select id="fActive"><option value="نعم">مفعّل (يظهر في الموقع)</option><option value="لا">مخفي</option></select>
+
+      <div class="grid3">
+        <div class="row" id="styleRow">
+          <label>لون الكارت</label>
+          <select id="badge">
+            <option value="">أزرق (افتراضي)</option>
+            <option value="ramadan">رمضان</option>
+            <option value="purple">أزرق فاتح</option>
+            <option value="gold-card">ذهبي</option>
+          </select>
+        </div>
+        <div class="row" id="imageRow">
+          <label>صورة الكارت</label>
+          <input id="image" placeholder="kaaba.jpg">
+          <div class="hint">اسم ملف صورة في نفس فولدر الموقع أو رابط كامل.</div>
+        </div>
+        <div class="row" id="subtitleRow">
+          <label>نص الزرار / سطر إضافي</label>
+          <input id="subtitle" placeholder="استفسر عن التفاصيل">
+        </div>
       </div>
-      <div class="form-actions">
-        <button type="submit" class="btn btn-green" style="flex:1">حفظ</button>
-        <button type="button" class="btn btn-light" onclick="closeModal()">إلغاء</button>
+
+      <div class="grid2">
+        <div class="row">
+          <label>ترتيب الظهور</label>
+          <input id="order" type="number" value="1" min="1">
+        </div>
+        <div class="row">
+          <label>الحالة</label>
+          <select id="active"><option value="نعم">ظاهر في الموقع</option><option value="لا">مخفي</option></select>
+        </div>
       </div>
-    </form>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-gold" id="saveBtn">حفظ العرض</button>
+        <button class="btn btn-light" id="cancelBtn" style="display:none">إلغاء التعديل</button>
+      </div>
+      <div class="msg" id="formMsg"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0">العروض الحالية <span class="chip" id="secName">برامج العمرة</span></h2>
+      <div id="listWrap"><p class="center">جاري التحميل...</p></div>
+    </div>
   </div>
+
 </div>
 
 <script>
-let SCRIPT_URL = localStorage.getItem('hamsa_script_url') || '';
-let ADMIN_KEY = sessionStorage.getItem('hamsa_admin_key') || '';
-let currentOffers = [];
-let currentSection = '';
+(function(){
+  /* ====== غيّر الرابط ده لو نشرت نسخة جديدة من Apps Script ====== */
+  var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw_cCB2H9ndKYBI0XWhOO-mYdD7en91v1y9SezPU3qJE64aAXhtbH54pMdTuSpUCTA7nA/exec';
 
-const loginScreen = document.getElementById('loginScreen');
-const dashboard = document.getElementById('dashboard');
-const loginMsg = document.getElementById('loginMsg');
-const dashMsg = document.getElementById('dashMsg');
+  var KEY='', allOffers=[], currentSection='umrah';
+  var $ = function(id){ return document.getElementById(id); };
 
-if(SCRIPT_URL) document.getElementById('scriptUrlInput').value = SCRIPT_URL;
+  var SEC_NAMES = {umrah:'برامج العمرة',hajj:'برامج الحج',cash:'كاش اقتصادي',cash5:'كاش 5 نجوم'};
 
-function showMsg(el,text,type){
-  el.textContent = text;
-  el.className = 'msg show ' + (type||'');
-}
-
-function updateFieldLabels(){
-  const s = document.getElementById('fSection').value;
-  const lblItems = document.getElementById('lblItems');
-  const lblPrice = document.getElementById('lblPrice');
-  const lblSubtitle = document.getElementById('lblSubtitle');
-  const hintItems = document.getElementById('hintItems');
-  const hintPrice = document.getElementById('hintPrice');
-  const fItems = document.getElementById('fItems');
-  const fPrice = document.getElementById('fPrice');
-
-  if(s === 'cash'){
-    lblSubtitle.textContent = 'ملاحظة قصيرة (اختياري، مثل نوع الطيران)';
-    lblItems.textContent = 'بيانات الفنادق (سطر لكل فندق)';
-    hintItems.textContent = 'مثال: المدينة: نسك المدينة / درة الإيمان — 3 ليالي';
-    fItems.placeholder = 'المدينة: نسك المدينة / درة الإيمان — 3 ليالي\nمكة: قصر العليان — 11 ليلة';
-    lblPrice.textContent = 'أسعار الغرف (سطر لكل نوع)';
-    hintPrice.textContent = 'اكتب كل نوع غرفة وسعره بالشكل: النوع:السعر — مثال: رباعي:40,500';
-    fPrice.placeholder = 'رباعي:40,500\nثلاثي:43,500\nثنائي:48,900\nسينجل:64,500';
-  }else{
-    lblSubtitle.textContent = 'وصف قصير';
-    lblItems.textContent = 'تفاصيل العرض (كل نقطة في سطر)';
-    hintItems.textContent = '';
-    fItems.placeholder = '1000 جنيه × 24 شهر\n2000 جنيه × 12 شهر';
-    lblPrice.textContent = 'نص السعر / الشريط الملون';
-    hintPrice.textContent = '';
-    fPrice.placeholder = 'مثال: ابدأ من 1,000 جنيه';
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
   }
-}
+  function show(el,kind,text){ el.className='msg show '+kind; el.textContent=text; }
+  function hide(el){ el.className='msg'; }
 
-async function doLogin(){
-  const url = document.getElementById('scriptUrlInput').value.trim();
-  const key = document.getElementById('keyInput').value.trim();
-  if(!url || !key){ showMsg(loginMsg,'من فضلك أدخل الرابط والمفتاح','error'); return; }
-  SCRIPT_URL = url.replace(/\/+$/,'');
-  ADMIN_KEY = key;
-  try{
-    const res = await fetch(SCRIPT_URL + '?action=offersAdmin&key=' + encodeURIComponent(ADMIN_KEY));
-    const data = await res.json();
-    if(!data.ok){ showMsg(loginMsg, data.error || 'تعذر تسجيل الدخول', 'error'); return; }
-    localStorage.setItem('hamsa_script_url', SCRIPT_URL);
-    sessionStorage.setItem('hamsa_admin_key', ADMIN_KEY);
-    currentOffers = data.offers || [];
-    loginScreen.style.display='none';
-    dashboard.style.display='block';
-    renderOffers();
-  }catch(err){
-    showMsg(loginMsg,'تعذر الاتصال بالسيرفر، تأكد من الرابط','error');
+  /* ====== تسجيل الدخول ====== */
+  function login(k){
+    show($('loginMsg'),'','جاري التحقق...');
+    fetch(SCRIPT_URL+'?action=offersAdmin&key='+encodeURIComponent(k))
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d && d.ok){
+          KEY=k;
+          try{ localStorage.setItem('hamsa_admin_key',k); }catch(e){}
+          $('login').style.display='none';
+          $('panel').style.display='block';
+          $('logout').style.display='inline-block';
+          allOffers = d.offers||[];
+          renderList();
+        }else{
+          show($('loginMsg'),'err',(d&&d.error)||'مفتاح غير صحيح');
+        }
+      })
+      .catch(function(){ show($('loginMsg'),'err','تعذر الاتصال بالسيرفر. راجع رابط النشر.'); });
   }
-}
 
-function doLogout(){
-  sessionStorage.removeItem('hamsa_admin_key');
-  ADMIN_KEY='';
-  dashboard.style.display='none';
-  loginScreen.style.display='block';
-}
-
-async function reloadOffers(){
-  const res = await fetch(SCRIPT_URL + '?action=offersAdmin&key=' + encodeURIComponent(ADMIN_KEY));
-  const data = await res.json();
-  if(data.ok){ currentOffers = data.offers || []; renderOffers(); }
-  else showMsg(dashMsg, data.error||'خطأ في التحميل', 'error');
-}
-
-function setSection(sec, el){
-  currentSection = sec;
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  el.classList.add('active');
-  renderOffers();
-}
-
-function renderOffers(){
-  const list = document.getElementById('offerList');
-  const items = currentSection ? currentOffers.filter(function(o){return o.section===currentSection;}) : currentOffers;
-  if(!items.length){ list.innerHTML = '<div class="empty">لا يوجد عروض في هذا القسم بعد</div>'; return; }
-  list.innerHTML = items.map(function(o){
-    return '<div class="offer ' + (o.active==='نعم'?'':'inactive') + '">' +
-      '<div class="info">' +
-        '<b>' + escapeHtml(o.title) + ' ' + (o.active!=='نعم'?'(مخفي)':'') + '</b>' +
-        '<span>' + escapeHtml(o.subtitle||'') + ' — القسم: ' + sectionLabel(o.section) + ' — ترتيب: ' + o.order + '</span>' +
-      '</div>' +
-      '<div class="actions">' +
-        '<button class="btn btn-light" onclick=\'editOffer(' + JSON.stringify(o.id) + ')\'>تعديل</button>' +
-        '<button class="btn btn-danger" onclick=\'deleteOffer(' + JSON.stringify(o.id) + ')\'>حذف</button>' +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function sectionLabel(s){
-  return s==='umrah'?'العمرة':s==='hajj'?'الحج':s==='cash'?'عمرة الكاش':s;
-}
-function escapeHtml(s){
-  return String(s||'').replace(/[&<>"']/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  $('loginBtn').addEventListener('click',function(){
+    var k=$('key').value.trim();
+    if(!k){ show($('loginMsg'),'err','اكتب المفتاح أولاً'); return; }
+    login(k);
   });
-}
+  $('key').addEventListener('keydown',function(e){ if(e.key==='Enter') $('loginBtn').click(); });
 
-function openModal(){
-  document.getElementById('modalTitle').textContent='إضافة عرض جديد';
-  document.getElementById('offerForm').reset();
-  document.getElementById('offerId').value='';
-  updateFieldLabels();
-  document.getElementById('modalOverlay').classList.add('show');
-}
-function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
+  $('logout').addEventListener('click',function(){
+    try{ localStorage.removeItem('hamsa_admin_key'); }catch(e){}
+    location.reload();
+  });
 
-function editOffer(id){
-  const o = currentOffers.find(function(x){return x.id===id;});
-  if(!o) return;
-  document.getElementById('modalTitle').textContent='تعديل العرض';
-  document.getElementById('offerId').value=o.id;
-  document.getElementById('fSection').value=o.section;
-  document.getElementById('fTitle').value=o.title;
-  document.getElementById('fSubtitle').value=o.subtitle;
-  document.getElementById('fItems').value=(o.items||[]).join('\n');
-  document.getElementById('fPrice').value=(o.price||'').split('|').map(function(s){return s.trim();}).filter(Boolean).join('\n');
-  document.getElementById('fImage').value=o.image;
-  document.getElementById('fOrder').value=o.order;
-  document.getElementById('fActive').value=o.active==='نعم'?'نعم':'لا';
-  updateFieldLabels();
-  document.getElementById('modalOverlay').classList.add('show');
-}
-
-async function deleteOffer(id){
-  if(!confirm('هل أنت متأكد من حذف هذا العرض؟')) return;
-  const body = new URLSearchParams({action:'deleteOffer', key:ADMIN_KEY, id:id});
-  const res = await fetch(SCRIPT_URL, {method:'POST', body:body});
-  const data = await res.json();
-  if(data.ok){ showMsg(dashMsg,'تم حذف العرض','success'); reloadOffers(); }
-  else showMsg(dashMsg, data.error||'تعذر الحذف','error');
-}
-
-document.getElementById('offerForm').addEventListener('submit', async function(e){
-  e.preventDefault();
-  const id = document.getElementById('offerId').value.trim();
-  const items = document.getElementById('fItems').value.split('\n').map(function(s){return s.trim();}).filter(Boolean).join('|');
-  const price = document.getElementById('fPrice').value.split('\n').map(function(s){return s.trim();}).filter(Boolean).join('|');
-  const payload = {
-    key: ADMIN_KEY,
-    action: id ? 'updateOffer' : 'addOffer',
-    id: id,
-    section: document.getElementById('fSection').value,
-    title: document.getElementById('fTitle').value.trim(),
-    subtitle: document.getElementById('fSubtitle').value.trim(),
-    items: items,
-    price: price,
-    image: document.getElementById('fImage').value.trim(),
-    order: document.getElementById('fOrder').value || '1',
-    active: document.getElementById('fActive').value
-  };
-  const body = new URLSearchParams(payload);
-  try{
-    const res = await fetch(SCRIPT_URL, {method:'POST', body:body});
-    const data = await res.json();
-    if(data.ok){
-      showMsg(dashMsg, id?'تم تعديل العرض':'تم إضافة العرض','success');
-      closeModal();
-      reloadOffers();
-    }else{
-      showMsg(dashMsg, data.error||'حدث خطأ','error');
-    }
-  }catch(err){
-    showMsg(dashMsg,'تعذر الاتصال بالسيرفر','error');
+  function reload(){
+    return fetch(SCRIPT_URL+'?action=offersAdmin&key='+encodeURIComponent(KEY))
+      .then(function(r){return r.json();})
+      .then(function(d){ if(d&&d.ok){ allOffers=d.offers||[]; renderList(); } });
   }
-});
 
-updateFieldLabels();
+  /* ====== التبويبات ====== */
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){
+    t.addEventListener('click',function(){
+      document.querySelector('.tab.active').classList.remove('active');
+      t.classList.add('active');
+      currentSection=t.getAttribute('data-sec');
+      $('secName').textContent=SEC_NAMES[currentSection];
+      $('section').value=currentSection;
+      applySectionHints();
+      resetForm();
+      renderList();
+    });
+  });
 
-if(SCRIPT_URL && ADMIN_KEY){
-  fetch(SCRIPT_URL + '?action=offersAdmin&key=' + encodeURIComponent(ADMIN_KEY))
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(data.ok){
-        currentOffers = data.offers || [];
-        loginScreen.style.display='none';
-        dashboard.style.display='block';
-        renderOffers();
-      }
-    }).catch(function(){});
-}
+  /* ====== شرح الحقول حسب القسم ====== */
+  function applySectionHints(){
+    var s=$('section').value;
+    var isCash = (s==='cash'||s==='cash5');
+    $('styleRow').style.display = (s==='umrah')?'block':'none';
+    $('imageRow').style.display = (s==='umrah')?'block':'none';
+    $('subtitleRow').style.display = (s==='hajj'||isCash)?'block':'none';
+
+    if(isCash){
+      $('itemsLabel').textContent='بيانات الفنادق والطيران';
+      $('itemsHint').textContent='كل سطر يظهر كسطر مستقل، مثال: مكة: الماسة جراند — 5 ليالي';
+      $('priceLabelTxt').textContent='جدول الأسعار';
+      $('priceHint').textContent='كل سطر بالشكل: نوع الغرفة : السعر — مثال: رباعي : 47,000';
+      $('price').rows=6;
+      $('subtitleRow').querySelector('label').textContent='سطر إضافي (اختياري)';
+    }else if(s==='hajj'){
+      $('itemsLabel').textContent='مميزات البرنامج';
+      $('itemsHint').textContent='كل ميزة في سطر مستقل.';
+      $('priceLabelTxt').textContent='السعر (غير مستخدم في الحج)';
+      $('priceHint').textContent='سيبه فاضي.';
+      $('subtitleRow').querySelector('label').textContent='نص الزرار';
+    }else{
+      $('itemsLabel').textContent='تفاصيل البرنامج';
+      $('itemsHint').textContent='كل نقطة في سطر مستقل.';
+      $('priceLabelTxt').textContent='الشريط السفلي للسعر';
+      $('priceHint').textContent='مثال: ابدأ من 1,000 جنيه';
+      $('price').rows=2;
+    }
+  }
+  $('section').addEventListener('change',applySectionHints);
+
+  /* ====== الجدول ====== */
+  function renderList(){
+    var list = allOffers.filter(function(o){ return o.section===currentSection; })
+                        .sort(function(a,b){ return a.order-b.order; });
+    if(!list.length){ $('listWrap').innerHTML='<p class="center">لا يوجد عروض في هذا القسم بعد.</p>'; return; }
+    var rows = list.map(function(o){
+      return '<tr class="'+(o.active==='نعم'?'':'off')+'">'+
+        '<td>'+o.order+'</td>'+
+        '<td><b>'+esc(o.title)+'</b><div class="hint">'+esc((o.items||[]).join(' • ').slice(0,90))+'</div></td>'+
+        '<td>'+esc(o.active)+'</td>'+
+        '<td class="actions">'+
+          '<button class="btn btn-green" data-edit="'+o.id+'">تعديل</button> '+
+          '<button class="btn btn-red" data-del="'+o.id+'">حذف</button>'+
+        '</td></tr>';
+    }).join('');
+    $('listWrap').innerHTML='<table><tr><th>الترتيب</th><th>العرض</th><th>الحالة</th><th>إجراء</th></tr>'+rows+'</table>';
+
+    Array.prototype.forEach.call($('listWrap').querySelectorAll('[data-edit]'),function(b){
+      b.addEventListener('click',function(){ editOffer(b.getAttribute('data-edit')); });
+    });
+    Array.prototype.forEach.call($('listWrap').querySelectorAll('[data-del]'),function(b){
+      b.addEventListener('click',function(){ delOffer(b.getAttribute('data-del')); });
+    });
+  }
+
+  /* ====== نموذج الإضافة/التعديل ====== */
+  function resetForm(){
+    $('offerId').value=''; $('title').value=''; $('items').value=''; $('price').value='';
+    $('subtitle').value=''; $('image').value=''; $('badge').value=''; $('order').value='1';
+    $('active').value='نعم';
+    $('formTitle').textContent='إضافة عرض جديد';
+    $('cancelBtn').style.display='none';
+    hide($('formMsg'));
+  }
+  $('cancelBtn').addEventListener('click',resetForm);
+
+  function editOffer(id){
+    var o = allOffers.filter(function(x){return x.id===id;})[0];
+    if(!o) return;
+    $('offerId').value=o.id;
+    $('section').value=o.section; currentSection=o.section; applySectionHints();
+    $('title').value=o.title;
+    $('items').value=(o.items||[]).join('\n');
+    $('price').value=String(o.price||'').split('|').join('\n');
+    $('subtitle').value=o.subtitle||'';
+    $('image').value=o.image||'';
+    $('badge').value=o.badge||'';
+    $('order').value=o.order||1;
+    $('active').value=(o.active==='نعم')?'نعم':'لا';
+    $('formTitle').textContent='تعديل: '+o.title;
+    $('cancelBtn').style.display='inline-block';
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function linesToPipe(v){
+    return String(v||'').split('\n').map(function(s){return s.trim();}).filter(Boolean).join('|');
+  }
+
+  $('saveBtn').addEventListener('click',function(){
+    var title=$('title').value.trim();
+    if(!title){ show($('formMsg'),'err','اكتب اسم العرض'); return; }
+
+    var id=$('offerId').value.trim();
+    var data=new URLSearchParams();
+    data.set('action', id?'updateOffer':'addOffer');
+    data.set('key', KEY);
+    if(id) data.set('id', id);
+    data.set('section', $('section').value);
+    data.set('title', title);
+    data.set('subtitle', $('subtitle').value.trim());
+    data.set('items', linesToPipe($('items').value));
+    data.set('price', linesToPipe($('price').value));
+    data.set('priceLabel','');
+    data.set('badge', $('badge').value);
+    data.set('image', $('image').value.trim());
+    data.set('order', $('order').value||'1');
+    data.set('active', $('active').value);
+
+    show($('formMsg'),'','جاري الحفظ...');
+    $('saveBtn').disabled=true;
+    fetch(SCRIPT_URL,{method:'POST',body:data})
+      .then(function(r){return r.json();})
+      .then(function(res){
+        if(res && res.ok){
+          show($('formMsg'),'ok','تم الحفظ بنجاح. حدّث صفحة الموقع لتشوف التغيير.');
+          resetForm(); reload();
+        }else{
+          show($('formMsg'),'err','لم يتم الحفظ: '+((res&&res.error)||'خطأ غير معروف'));
+        }
+      })
+      .catch(function(){ show($('formMsg'),'err','تعذر الاتصال بالسيرفر.'); })
+      .finally(function(){ $('saveBtn').disabled=false; });
+  });
+
+  function delOffer(id){
+    var o = allOffers.filter(function(x){return x.id===id;})[0];
+    if(!o) return;
+    if(!confirm('متأكد من حذف: '+o.title+' ؟')) return;
+    var data=new URLSearchParams();
+    data.set('action','deleteOffer'); data.set('key',KEY); data.set('id',id);
+    fetch(SCRIPT_URL,{method:'POST',body:data})
+      .then(function(r){return r.json();})
+      .then(function(res){
+        if(res && res.ok){ reload(); }
+        else{ alert('لم يتم الحذف: '+((res&&res.error)||'خطأ')); }
+      })
+      .catch(function(){ alert('تعذر الاتصال بالسيرفر.'); });
+  }
+
+  /* دخول تلقائي لو المفتاح متخزن */
+  applySectionHints();
+  var saved='';
+  try{ saved=localStorage.getItem('hamsa_admin_key')||''; }catch(e){}
+  if(saved){ $('key').value=saved; login(saved); }
+})();
 </script>
 </body>
 </html>
