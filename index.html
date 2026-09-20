@@ -18,6 +18,7 @@ h1{font-size:20px;margin:0}
 .btn-green{background:var(--green);color:#fff}
 .btn-light{background:#fff;color:var(--green);border-color:var(--line)}
 .btn-red{background:#fff0f0;color:#a12626;border-color:#f3c9c9}
+.btn:disabled{opacity:.6;cursor:not-allowed}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:18px;box-shadow:0 8px 25px #0000000d}
 label{display:block;font-weight:800;margin:0 0 6px}
 input,select,textarea{width:100%;border:1px solid #d7dde5;border-radius:10px;padding:10px 12px;font:inherit;background:#fff;color:var(--ink);outline:none}
@@ -147,6 +148,19 @@ td.actions{white-space:nowrap;text-align:center}
     <div class="card">
       <h2 style="margin-top:0">العروض الحالية <span class="chip" id="secName">برامج العمرة</span></h2>
       <div id="listWrap"><p class="center">جاري التحميل...</p></div>
+    </div>
+
+    <div class="card" id="importCard">
+      <h2 style="margin-top:0">نقل العروض الحالية للشيت <span class="chip">مرة واحدة فقط</span></h2>
+      <p style="margin:0 0 12px;line-height:1.9">
+        الزرار ده بيحط كل عروض الموقع الحالية (5 عمرة + 3 حج + 3 كاش اقتصادي + 3 كاش 5 نجوم = 14 عرض) في الشيت،
+        عشان تقدر تعدّل أي عرض من هنا ويفضل الموقع ثابت من غير ما الكروت تختفي.
+      </p>
+      <div class="hint" style="margin-bottom:14px">
+        تحذير: هيمسح كل العروض الموجودة حاليًا في الشيت ويكتبها من جديد. استنى لحد ما يخلص (حوالي دقيقة أو دقيقتين) ومتقفلش الصفحة.
+      </div>
+      <button class="btn btn-green" id="importBtn">نقل العروض الحالية للشيت</button>
+      <div class="msg" id="importMsg"></div>
     </div>
   </div>
 
@@ -362,6 +376,115 @@ td.actions{white-space:nowrap;text-align:center}
       })
       .catch(function(){ alert('تعذر الاتصال بالسيرفر.'); });
   }
+
+  /* ====== نقل العروض الحالية للشيت (مرة واحدة) ====== */
+  var RIYAL = 'الطيران: سعودي — القاهرة / المدينة / جدة / القاهرة';
+  var SEED = [
+    /* ---------- العمرة ---------- */
+    {section:'umrah',title:'عمرة التيسير',subtitle:'',
+      items:['1,000 أو 1,250 أو 1,500 جنيه شهريًا','على مدار 24 شهر','2,000 أو 2,500 أو 3,000 جنيه شهريًا','على مدار 12 شهر'],
+      price:'ابدأ من 1,000 جنيه',badge:'',image:'kaaba.jpg'},
+    {section:'umrah',title:'تيسير رمضان',subtitle:'',
+      items:['3,000 جنيه على 16 شهر','بدأ من شهر 6','2,500 جنيه على 20 شهر','بدأ من شهر 5'],
+      price:'حجز مرن',badge:'ramadan',image:'ramadan.jpg'},
+    {section:'umrah',title:'العمرة بالقسط',subtitle:'',
+      items:['اختار البرنامج','ادفع 50% أو 60%','قسط الباقي من 3 إلى 12 شهر','بدون تعقيد'],
+      price:'3 - 12 شهر',badge:'purple',image:'installment.jpg'},
+    {section:'umrah',title:'عمرة التيسير البلاتينوم',subtitle:'',
+      items:['5,000 جنيه','على 12 شهر','برنامج مميز'],
+      price:'5,000 × 12 شهر',badge:'gold-card',image:'hotel.jpg'},
+    {section:'umrah',title:'عمرة التيسير الذهبية',subtitle:'',
+      items:['4,000 جنيه','على 12 شهر','خيار مميز للتيسير'],
+      price:'4,000 × 12 شهر',badge:'gold-card',image:'medina.jpg'},
+
+    /* ---------- الحج ---------- */
+    {section:'hajj',title:'الحج السياحي',subtitle:'استفسر عن التفاصيل',
+      items:['برامج متنوعة ومميزة','خدمات مميزة للحجاج','إشراف ومتابعة'],price:'',badge:'',image:''},
+    {section:'hajj',title:'الحج الميسر',subtitle:'استفسر عن التفاصيل',
+      items:['برنامج حج ميسر','خدمات متكاملة','أسعار وخيارات متعددة'],price:'',badge:'',image:''},
+    {section:'hajj',title:'الحج الميسر بالتقسيط',subtitle:'اطلب التفاصيل',
+      items:['حتى 120,000 جنيه','تقسيط حتى 24 شهر','خطة سداد مرنة'],price:'',badge:'',image:''},
+
+    /* ---------- كاش اقتصادي ---------- */
+    {section:'cash',title:'ريع بخش — اقتصادي بالمواصلات',subtitle:'',
+      items:['المدينة: نسك المدينة / درة الإيمان / طيبة هيلز — 3 ليالي','مكة: قصر العليان / النخبة 1 / أبراج القصواء — 11 ليلة'],
+      price:'رباعي : 40,500|ثلاثي : 43,500|ثنائي : 48,900|سينجل : 64,500|طفل : 31,500|رضيع : 17,500',badge:'',image:''},
+    {section:'cash',title:'اقتصادي مشي — بير بليلة',subtitle:'',
+      items:['المدينة: نسك المدينة / درة الإيمان / طيبة هيلز — 3 ليالي','مكة: إعمار أفاق — 11 ليلة'],
+      price:'رباعي : 42,000|ثلاثي : 46,500|ثنائي : 52,900|سينجل : 72,900|طفل : 31,500|رضيع : 17,500',badge:'',image:''},
+    {section:'cash',title:'اقتصادي مشي — أجياد السد',subtitle:'',
+      items:['المدينة: نسك المدينة / درة الإيمان / طيبة هيلز — 3 ليالي','مكة: واحة الضيافة / العليان أجياد — 11 ليلة'],
+      price:'رباعي : 42,500|ثلاثي : 46,900|ثنائي : 53,500|سينجل : 73,900|طفل : 31,500|رضيع : 17,500',badge:'',image:''},
+
+    /* ---------- كاش 5 نجوم ---------- */
+    {section:'cash5',title:'5 نجوم أ — 3 ليالي المدينة + 4 ليالي مكة',subtitle:'',
+      items:[RIYAL,'المدينة: فندق الحرم — 3 ليالي بالأفطار','مكة: الصفوه البرج الثالث — 4 ليالي بالأفطار، أول مطل على الحرم'],
+      price:'رباعي : 66,900|ثلاثي : 70,900|ثنائي : 79,900',badge:'',image:''},
+    {section:'cash5',title:'5 نجوم ب — 3 ليالي المدينة + 4 ليالي مكة',subtitle:'',
+      items:[RIYAL,'المدينة: دره الايمان — 3 ليالي بالأفطار','مكة: الشهداء — 4 ليالي بالأفطار، أول مطل على الحرم'],
+      price:'رباعي : 55,500|ثلاثي : 58,900|ثنائي : 64,500',badge:'',image:''},
+    {section:'cash5',title:'اقتصادي مميز — 4 + 5 ليالي',subtitle:'',
+      items:[RIYAL,'المدينة: كونكورد دار الخير — 4 ليالي','مكة: الماسة جراند — 5 ليالي، 400 متر من الحرم'],
+      price:'رباعي : 47,000|ثلاثي : 50,900|ثنائي : 57,900',badge:'',image:''}
+  ];
+
+  function postForm(obj){
+    var d=new URLSearchParams();
+    Object.keys(obj).forEach(function(k){ d.set(k,obj[k]); });
+    return fetch(SCRIPT_URL,{method:'POST',body:d}).then(function(r){return r.json();});
+  }
+
+  /* تنفيذ المهام واحدة ورا التانية (عشان الشيت ميتلخبطش) */
+  function runSequential(tasks, label, msgEl){
+    var i=0;
+    function next(){
+      if(i>=tasks.length) return Promise.resolve();
+      var n=i++;
+      show(msgEl,'',label+' '+(n+1)+' من '+tasks.length+' ...');
+      return tasks[n]().then(function(res){
+        if(!res || !res.ok) throw new Error((res&&res.error)||'خطأ غير معروف');
+        return next();
+      });
+    }
+    return next();
+  }
+
+  $('importBtn').addEventListener('click',function(){
+    if(!confirm('ده هيمسح كل العروض الموجودة حاليًا في الشيت ويضيف 14 عرض جديد. متأكد؟')) return;
+
+    var btn=$('importBtn'), msg=$('importMsg');
+    btn.disabled=true;
+
+    var delTasks = allOffers.map(function(o){
+      return function(){ return postForm({action:'deleteOffer',key:KEY,id:o.id}); };
+    });
+
+    var counters={};
+    var addTasks = SEED.map(function(o){
+      counters[o.section]=(counters[o.section]||0)+1;
+      var order=counters[o.section];
+      return function(){
+        return postForm({
+          action:'addOffer', key:KEY,
+          section:o.section, title:o.title, subtitle:o.subtitle,
+          items:o.items.join('|'), price:o.price, priceLabel:'',
+          badge:o.badge, image:o.image, order:order, active:'نعم'
+        });
+      };
+    });
+
+    runSequential(delTasks,'جاري مسح العروض القديمة',msg)
+      .then(function(){ return runSequential(addTasks,'جاري إضافة العرض',msg); })
+      .then(function(){ return reload(); })
+      .then(function(){
+        show(msg,'ok','تم نقل العروض بنجاح (14 عرض). افتح الموقع واعمل Refresh.');
+      })
+      .catch(function(err){
+        show(msg,'err','توقف النقل: '+(err&&err.message?err.message:'خطأ')+'. دوس الزرار تاني وهيكمّل من الأول.');
+        reload();
+      })
+      .finally(function(){ btn.disabled=false; });
+  });
 
   /* دخول تلقائي لو المفتاح متخزن */
   applySectionHints();
